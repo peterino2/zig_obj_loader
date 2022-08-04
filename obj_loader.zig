@@ -2,7 +2,7 @@ const std = @import("std");
 
 const ArrayListUnmanaged = std.ArrayListUnmanaged;
 
-pub fn loadObj(filename: []const u8, allocator: std.mem.Allocator) !void {
+pub fn loadObj(filename: []const u8, allocator: std.mem.Allocator) !ObjContents {
     return try ObjContents.load(filename, allocator);
 }
 
@@ -42,7 +42,22 @@ pub const ObjMesh = struct {
     v_faces: ArrayListUnmanaged(ObjFace) = .{},
     allocator: std.mem.Allocator,
 
-    pub fn print_stats(self: *ObjMesh) void {
+    pub fn validate_mesh(self: ObjMesh) !void {
+        for (self.v_faces.items) |face| {
+            var i: u32 = 0;
+            while (i < face.count) {
+                if (face.vertex[i] > self.v_positions.items.len)
+                    return error.FaceReferencesInvalidVertex;
+                if (face.normal[i] > self.v_normals.items.len)
+                    return error.FaceReferencesInvalidNormal;
+                if (face.texture[i] > self.v_textures.items.len)
+                    return error.FaceReferencesInvalidTexture;
+                i += 1;
+            }
+        }
+    }
+
+    pub fn print_stats(self: ObjMesh) void {
         std.debug.print("obj: {s}, Vertices count = {d} Normals count = {d}, faces = {d}\n", .{
             self.object_name,
             self.v_positions.items.len,
@@ -350,14 +365,12 @@ const ObjContents = struct {
         var mesh = try ObjMesh.init("root", allocator);
         _ = mesh;
 
-        var file_contents = try loadFileAlloc(fileName, 1, std.testing.allocator);
-        defer std.testing.allocator.free(file_contents);
+        var file_contents = try loadFileAlloc(fileName, 1, allocator);
+        defer allocator.free(file_contents);
         var lines = fileIntoLines(file_contents);
 
         while (lines.next()) |line| {
-            var result = parse_line(line, std.testing.allocator) catch {
-                unreachable;
-            };
+            var result = try parse_line(line, allocator);
 
             if (result == .object) {
                 if (mesh.v_positions.items.len > 0) {

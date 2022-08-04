@@ -2,7 +2,10 @@
 
 This was very rapidly written to provide a simple interface for loading `.obj` files in zig.
 
-At this time I make no garauntees on correctness or performance.
+![Suzanne](https://peterino.com/Monkey.png)
+
+At this time I make no garauntees on correctness or performance, will eventually support all .obj and .mtl 
+directives.
 
 To load an obj, 
 
@@ -12,6 +15,32 @@ const obj_loader = @import("path/to/obj_loader.zig");
 var contents: ObjContents = obj_loader.loadObj("suzanne.obj", your.favorite.allocator);
 defer contents.deinit();
 ```
+
+Transforming a mesh into your vertex/model format should be quite easy.
+
+```zig
+
+const mesh = fileContents.meshes.items[0];
+
+try vertices.ensureTotalCapacity(mesh.v_faces.items.len * 4);
+
+for (mesh.v_faces.items) |face| {
+    var i: u32 = 0;
+    while (i < face.count) : (i += 1) {
+        const p = mesh.v_positions.items[face.vertex[i] - 1];
+        const n = mesh.v_normals.items[face.normal[i] - 1];
+        const v = Vertex{
+            .position = .{ .x = p.x, .y = p.y, .z = p.z },
+            .normal = .{ .x = n.x, .y = n.y, .z = n.z },
+            .color = .{ .r = n.x, .g = n.y, .b = n.z, .a = 1.0 },
+        };
+        try vertices.append(v);
+    }
+}
+```
+
+
+## Details
 
 The ObjContents contains a list of ObjMesh objects.
 
@@ -50,3 +79,4 @@ pub const ObjFace = struct {
     count: u32,
 };
 ```
+

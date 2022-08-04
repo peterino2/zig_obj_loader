@@ -6,7 +6,7 @@ At this time I make no garauntees on correctness or performance.
 
 To load an obj, 
 
-```
+```zig
 const obj_loader = @import("path/to/obj_loader.zig");
 
 var contents: ObjContents = obj_loader.loadObj("suzanne.obj", your.favorite.allocator);
@@ -15,7 +15,7 @@ defer contents.deinit();
 
 The ObjContents contains a list of ObjMesh objects.
 
-```
+```zig
 std.debug.print("obj: {s}, Vertices count = {d} Normals count = {d}, faces = {d}\n", .{
     contents.meshes.items[0].object_name,
     contents.meshes.items[0].v_positions.items.len,
@@ -24,7 +24,7 @@ std.debug.print("obj: {s}, Vertices count = {d} Normals count = {d}, faces = {d}
 });
 ```
 
-```
+```zig
 pub const ObjMesh = struct {
     object_name: []u8,
     v_positions: ArrayListUnmanaged(ObjVec) = .{},
@@ -35,4 +35,18 @@ pub const ObjMesh = struct {
 
     ...
 }
+```
+
+## Faces 
+
+The faces produced by this library are currently coded to a maximum of 4. If you want more advanced 
+n-gon triangulation, give [`zmesh`](https://github.com/michal-z/zig-gamedev/tree/main/libs/zmesh) a try.
+
+```zig
+pub const ObjFace = struct {
+    vertex: [4]u32,
+    texture: [4]u32,
+    normal: [4]u32,
+    count: u32,
+};
 ```

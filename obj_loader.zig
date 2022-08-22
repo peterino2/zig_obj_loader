@@ -38,7 +38,7 @@ pub const ObjMesh = struct {
     v_positions: ArrayListUnmanaged(ObjVec) = .{},
     v_colors: ArrayListUnmanaged(ObjColor) = .{},
     v_normals: ArrayListUnmanaged(ObjVec) = .{},
-    v_textures: ArrayListUnmanaged(ObjVec2) = .{},
+    v_uvs: ArrayListUnmanaged(ObjVec2) = .{},
     v_faces: ArrayListUnmanaged(ObjFace) = .{},
     allocator: std.mem.Allocator,
 
@@ -50,7 +50,7 @@ pub const ObjMesh = struct {
                     return error.FaceReferencesInvalidVertex;
                 if (face.normal[i] > self.v_normals.items.len)
                     return error.FaceReferencesInvalidNormal;
-                if (face.texture[i] > self.v_textures.items.len)
+                if (face.texture[i] > self.v_uvs.items.len)
                     return error.FaceReferencesInvalidTexture;
                 i += 1;
             }
@@ -58,11 +58,12 @@ pub const ObjMesh = struct {
     }
 
     pub fn print_stats(self: ObjMesh) void {
-        std.debug.print("obj: {s}, Vertices count = {d} Normals count = {d}, faces = {d}\n", .{
+        std.debug.print("obj: {s}, Vertices count = {d} Normals count = {d}, faces = {d} texures = {d}\n", .{
             self.object_name,
             self.v_positions.items.len,
             self.v_normals.items.len,
             self.v_faces.items.len,
+            self.v_uvs.items.len,
         });
     }
 
@@ -89,7 +90,7 @@ pub const ObjMesh = struct {
         self.v_positions.deinit(self.allocator);
         self.v_colors.deinit(self.allocator);
         self.v_normals.deinit(self.allocator);
-        self.v_textures.deinit(self.allocator);
+        self.v_uvs.deinit(self.allocator);
         self.v_faces.deinit(self.allocator);
         self.allocator.free(self.object_name);
     }
@@ -394,7 +395,7 @@ const ObjContents = struct {
             }
 
             if (result == .texture) {
-                try mesh.v_textures.append(mesh.allocator, result.texture);
+                try mesh.v_uvs.append(mesh.allocator, result.texture);
             }
         }
         try self.meshes.append(mesh);

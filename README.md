@@ -2,7 +2,7 @@
 
 This was very rapidly written to provide a simple interface for loading `.obj` files in zig.
 
-![Suzanne](https://peterino.com/Monkey.png)
+![Suzanne](https://peterino.com/Monkey2.png)
 
 At this time I make no garauntees on correctness or performance, will eventually support all .obj and .mtl 
 directives.

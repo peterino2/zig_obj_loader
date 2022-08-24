@@ -187,6 +187,9 @@ pub fn toksIntoFace(toks: anytype) !ObjFace {
             continue;
         var face_desc = std.mem.tokenize(u8, tok, "/");
         var ic: u32 = 0; // ic= inner_count
+        if (count >= 4) {
+            continue;
+        }
         while (face_desc.next()) |prop| {
             switch (ic) {
                 0 => {
@@ -207,6 +210,11 @@ pub fn toksIntoFace(toks: anytype) !ObjFace {
     }
 
     rv.count = count;
+
+    if (rv.count > 4) {
+        std.debug.print("We have a face larger than 4 polys? polyCount = {d}\n", .{rv.count});
+    }
+
     return rv;
 }
 

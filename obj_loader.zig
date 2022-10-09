@@ -369,10 +369,8 @@ const ObjContents = struct {
         var self = ObjContents{
             .meshes = std.ArrayList(ObjMesh).init(allocator),
         };
-        _ = self;
 
         var mesh = try ObjMesh.init("root", allocator);
-        _ = mesh;
 
         var file_contents = try loadFileAlloc(fileName, 1, allocator);
         defer allocator.free(file_contents);
@@ -429,6 +427,7 @@ test "load_monkey_full" {
 test "parse_monkey" {
     const monkey_obj_path = "./test/monkey.obj";
     const monkey_mtl_path = "./test/monkey.mtl";
+    _ = monkey_mtl_path;
 
     var file_contents = try loadFileAlloc(monkey_obj_path, 1, std.testing.allocator);
     defer std.testing.allocator.free(file_contents);
@@ -455,7 +454,6 @@ test "parse_monkey" {
         if (result == .texture)
             texture_count += 1;
 
-        _ = result;
         count += 1;
     }
 
@@ -465,7 +463,4 @@ test "parse_monkey" {
         normal_count,
         faces_count,
     });
-
-    _ = monkey_mtl_path;
-    _ = monkey_obj_path;
 }

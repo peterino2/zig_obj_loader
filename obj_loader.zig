@@ -287,7 +287,7 @@ fn parse_line(lineIn: []const u8, allocator: std.mem.Allocator) !LineParseResult
         };
     }
 
-    std.debug.print("error: unrecognized header: `{s}` in line: {s} ", .{ first, line });
+    std.debug.print("error: unrecognized header: `{s}` in line: {s} \n", .{ first, line });
 
     return error.NotImplemented;
 }
@@ -377,7 +377,7 @@ const ObjContents = struct {
         var lines = fileIntoLines(file_contents);
 
         while (lines.next()) |line| {
-            var result = try parse_line(line, allocator);
+            var result = parse_line(line, allocator) catch continue;
 
             if (result == .object) {
                 if (mesh.v_positions.items.len > 0) {
@@ -440,7 +440,7 @@ test "parse_monkey" {
 
     while (lines.next()) |line| {
         var result = parse_line(line, std.testing.allocator) catch {
-            unreachable;
+            continue;
         };
         if (result == .vertex)
             vertex_count += 1;

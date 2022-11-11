@@ -287,7 +287,7 @@ fn parse_line(lineIn: []const u8, allocator: std.mem.Allocator) !LineParseResult
         };
     }
 
-    std.debug.print("error: unrecognized header: `{s}` in line: {s} \n", .{ first, line });
+    // std.debug.print("error: unrecognized header: `{s}` in line: {s} \n", .{ first, line });
 
     return error.NotImplemented;
 }

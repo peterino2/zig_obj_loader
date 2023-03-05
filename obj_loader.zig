@@ -409,7 +409,7 @@ const ObjContents = struct {
     }
 
     pub fn deinit(self: *ObjContents) void {
-        for (self.meshes.items) |_, i| {
+        for (self.meshes.items, 0..) |_, i| {
             self.meshes.items[i].deinit();
         }
         self.meshes.deinit();

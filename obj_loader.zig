@@ -343,7 +343,7 @@ test "parse_vector" {
     }
 }
 
-pub fn fileIntoLines(file_contents: []const u8) std.mem.SplitIterator(u8) {
+pub fn fileIntoLines(file_contents: []const u8) std.mem.SplitIterator(u8, .sequence) {
     // find a \n and see if it has \r\n
     var index: u32 = 0;
     while (index < file_contents.len) : (index += 1) {
